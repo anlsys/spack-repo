@@ -9,37 +9,9 @@ from spack import *
 
 
 class Aml(AutotoolsPackage):
-    """
-    AML: Building Blocks for Memory Management.
-
-    For information on AML please visit AML homepage.
-
-    Possible variants for aml spack package are:
-    - `+cuda`: enables library features implementation over cuda runtime library.
-    All cuda variants from the spack package "cuda" are allowed.
-    - `+hip`: enables library features implementation over hip runtime library.
-    All variants from the spack package "hip" are allowed.
-    - `+ze`: enables library features implementation over intel level_zero
-    library. This feature relies on aml 'automagick' detection until a spack
-    package becomes available.
-    - `+hwloc`: enables library features implementation over hwloc library.
-    If `+hwloc` variant is used, `hwloc@2.0:` is used as a dependency for
-    building hwloc features.
-    - `+opencl`: enables library features implementation over opencl library.
-    If `+rocm` and `+opencl` are used together, `rocm-opencl` is used as a
-    dependency for building opencl features.
-    - `+all`: enables all above variants.
-    - `openmp-targets={spir64,}`: Enable interoperability of pointers between
-    intel OpenMP and intel level_zero for spir64 openmp targets.
-    - `hip-platform={amd,nvidia}`: Compile aml with this hip backend
-    implementation. Under the hood, hip calls either amd or cuda functions.
-
-    Examples:
-    ========
-
-    - spack install aml +cuda +hwloc +hip +ze +opencl
-    - spack install aml +cuda +hip hip-platform=nvidia
-    - spack install aml +ze openmp-targets=spir64
+    """AML is a memory management library designed to ease the use of complex
+    memory topologies and complex data layout optimizations for
+    high-performance computing applications.
     """
 
     homepage = "https://argo-aml.readthedocs.io/"
@@ -68,13 +40,20 @@ class Aml(AutotoolsPackage):
     # Generate possible variants.
     #############################
 
-    for b in ['opencl', 'hwloc', 'ze', 'hip', 'cuda']:
-        variant(b, default=False,
-                description="Enable features relying on {} backend.".format(b))
-    variant('openmp-targets', values=disjoint_sets(('spir64')),
+    variant('opencl', default=False,
+            description="Support for memory operations on top of OpenCL.")
+    variant('ze', default=False,
+            description="Support for memory operations on top of Level Zero.")
+    variant('hip', default=False,
+            description="Support for memory operations on top of HIP.")
+    variant('cuda', default=False,
+            description="Support for memory operations on top of CUDA.")
+    variant('hwloc', default=False,
+            description="Enable feature related to topology management")
+    variant('openmp-targets', values=disjoint_sets(('spir64',)),
             description="Intel OpenMP target architecture setting.")
     variant('hip-platform', values=disjoint_sets(('amd', 'nvidia')),
-            description="Hip backend platform.")
+            description="HIP backend platform.")
 
     # Dependencies management
     #########################
