@@ -12,13 +12,14 @@ class Libnrm(AutotoolsPackage):
 
     homepage = "https://nrm.readthedocs.io/en/latest/"
     url = "https://github.com/anlsys/libnrm/releases/download/v0.7.0/libnrm-0.7.0.tar.gz"
+    git = "https://github.com/anlsys/libnrm.git"
     version('master', branch='master')
     version('0.7.0', sha256='30933537e9db6c1f35a3eda421794d2a562c492b520ed20e6490571b3ce0f1d8')
 
     maintainers = ['perarnau']
     tags = ['e4s']
 
-    when("@master"):
+    with when("@master"):
         depends_on("m4", type="build")
         depends_on("autoconf", type="build")
         depends_on("automake", type="build")
@@ -31,6 +32,6 @@ class Libnrm(AutotoolsPackage):
         depends_on("jansson")
         depends_on("check")
 
-    when("@0.7.0"):
+    with when("@0.7.0"):
         depends_on('pkgconfig', type='build')
         depends_on('libzmq')
