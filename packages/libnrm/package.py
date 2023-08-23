@@ -1,9 +1,9 @@
-# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack import *
+from spack.package import *
 
 
 class Libnrm(AutotoolsPackage):
@@ -11,13 +11,14 @@ class Libnrm(AutotoolsPackage):
     Resource Manager(NRM)."""
 
     homepage = "https://nrm.readthedocs.io/en/latest/"
-    url = "https://github.com/anlsys/libnrm/releases/download/v0.7.0/libnrm-0.7.0.tar.gz"
     git = "https://github.com/anlsys/libnrm.git"
-    version('master', branch='master', get_full_repo=True)
-    version('0.7.0', sha256='30933537e9db6c1f35a3eda421794d2a562c492b520ed20e6490571b3ce0f1d8')
+    version("master", branch="master", get_full_repo=True)
 
-    maintainers = ['perarnau']
-    tags = ['e4s']
+    maintainers = ["perarnau"]
+    tags = ["e4s"]
+
+    variant("geopm", default=False, description="Support for GeoPM.")
+    variant("openmp", default=True, description="Support for OMPT.")
 
     with when("@master"):
         depends_on("m4", type="build")
@@ -27,11 +28,16 @@ class Libnrm(AutotoolsPackage):
         depends_on("pkgconfig", type="build")
         depends_on("libzmq")
         depends_on("czmq")
-        depends_on("protobuf-c", type="build")
+        depends_on("protobuf-c")
         depends_on("hwloc")
         depends_on("jansson")
         depends_on("check")
+        depends_on("bats")
+        depends_on("papi+powercap")
+        depends_on("geopm", when="+geopm")
 
-    with when("@0.7.0"):
-        depends_on('pkgconfig', type='build')
-        depends_on('libzmq')
+    def configure_args(self):
+        config_args = []
+        config_args.extend(self.with_or_without("geopm"))
+        config_args.extend(self.enable_or_disable("openmp"))
+        return config_args
